@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 
-class LayoutExamplePage extends StatelessWidget {
+class LayoutExamplePage extends StatefulWidget {
   const LayoutExamplePage({super.key});
+
+  @override
+  State<LayoutExamplePage> createState() => _LayoutExamplePageState();
+}
+
+class _LayoutExamplePageState extends State<LayoutExamplePage> {
+  final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController2 = ScrollController();
+  bool _showScrollToTopButton = false;
+  bool _showScrollToTopButton2 = false;
 
   // Mock data for GridView
   final List<Map<String, dynamic>> gridItems = const [
@@ -30,6 +40,44 @@ class LayoutExamplePage extends StatelessWidget {
     {'name': 'Frank Miller', 'email': 'frank@example.com', 'role': 'Developer'},
     {'name': 'Grace Lee', 'email': 'grace@example.com', 'role': 'Designer'},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 監聽滾動 - ListView Example
+    _scrollController.addListener(() {
+      if (_scrollController.offset > 0 && !_showScrollToTopButton) {
+        setState(() {
+          _showScrollToTopButton = true;
+        });
+      } else if (_scrollController.offset <= 0 && _showScrollToTopButton) {
+        setState(() {
+          _showScrollToTopButton = false;
+        });
+      }
+    });
+
+    // 監聽滾動 - ListView Separator Example
+    _scrollController2.addListener(() {
+      if (_scrollController2.offset > 0 && !_showScrollToTopButton2) {
+        setState(() {
+          _showScrollToTopButton2 = true;
+        });
+      } else if (_scrollController2.offset <= 0 && _showScrollToTopButton2) {
+        setState(() {
+          _showScrollToTopButton2 = false;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _scrollController2.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -256,27 +304,50 @@ class LayoutExamplePage extends StatelessWidget {
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: ListView.builder(
-        itemCount: listItems.length,
-        itemBuilder: (context, index) {
-          final item = listItems[index];
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundColor:
-                  Colors.primaries[index % Colors.primaries.length],
-              child: Text(item['name']![0]),
-            ),
-            title: Text(item['name']!),
-            subtitle: Text(item['email']!),
-            trailing: Chip(
-              label: Text(item['role']!, style: const TextStyle(fontSize: 11)),
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-            ),
-            onTap: () {
-              // Handle tap
+      child: Stack(
+        children: [
+          ListView.builder(
+            controller: _scrollController,
+            itemCount: listItems.length,
+            itemBuilder: (context, index) {
+              final item = listItems[index];
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundColor:
+                      Colors.primaries[index % Colors.primaries.length],
+                  child: Text(item['name']![0]),
+                ),
+                title: Text(item['name']!),
+                subtitle: Text(item['email']!),
+                trailing: Chip(
+                  label: Text(
+                    item['role']!,
+                    style: const TextStyle(fontSize: 11),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                ),
+                onTap: () {
+                  // Handle tap
+                },
+              );
             },
-          );
-        },
+          ),
+          if (_showScrollToTopButton)
+            Positioned(
+              bottom: 16,
+              right: 16,
+              child: ElevatedButton(
+                onPressed: () {
+                  _scrollController.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                  );
+                },
+                child: const Icon(Icons.arrow_upward),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -288,28 +359,49 @@ class LayoutExamplePage extends StatelessWidget {
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: ListView.separated(
-        itemCount: listItems.length,
-        separatorBuilder: (context, index) => const Divider(height: 1),
-        itemBuilder: (context, index) {
-          final item = listItems[index];
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundColor:
-                  Colors.primaries[index % Colors.primaries.length],
-              child: Text(item['name']![0]),
-            ),
-            title: Text(item['name']!),
-            subtitle: Text(item['email']!),
-            trailing: Chip(
-              label: Text(item['role']!, style: const TextStyle(fontSize: 11)),
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-            ),
-            onTap: () {
-              // Handle tap
+      child: Stack(
+        children: [
+          ListView.separated(
+            controller: _scrollController2,
+            itemCount: listItems.length,
+            separatorBuilder: (context, index) => const Divider(height: 1),
+            itemBuilder: (context, index) {
+              final item = listItems[index];
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundColor:
+                      Colors.primaries[index % Colors.primaries.length],
+                  child: Text(item['name']![0]),
+                ),
+                title: Text(item['name']!),
+                subtitle: Text(item['email']!),
+                trailing: Chip(
+                  label:
+                      Text(item['role']!, style: const TextStyle(fontSize: 11)),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                ),
+                onTap: () {
+                  // Handle tap
+                },
+              );
             },
-          );
-        },
+          ),
+          if (_showScrollToTopButton2)
+            Positioned(
+              bottom: 16,
+              right: 16,
+              child: ElevatedButton(
+                onPressed: () {
+                  _scrollController2.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                  );
+                },
+                child: const Icon(Icons.arrow_upward),
+              ),
+            ),
+        ],
       ),
     );
   }
