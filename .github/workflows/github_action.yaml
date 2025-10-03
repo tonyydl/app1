@@ -1,0 +1,15 @@
+# github_action.yaml
+name: 'GitHub Action Test'
+
+on:
+  push:
+    branches:
+      - main  # Or whatever branch you want to run this action on
+
+jobs:
+  test_github_action:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Testing GitHub action
+        run: echo "Hello World GitHub Action"
