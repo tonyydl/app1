@@ -59,7 +59,7 @@ class LayoutExamplePage extends StatelessWidget {
           const SizedBox(height: 24),
 
           _buildSectionTitle('GridView Example'),
-          _buildGridViewExample(),
+          _buildGridViewExample(context),
           const SizedBox(height: 24),
 
           _buildSectionTitle('ListView Example'),
@@ -197,7 +197,7 @@ class LayoutExamplePage extends StatelessWidget {
   }
 
   // GridView Example: 網格佈局
-  Widget _buildGridViewExample() {
+  Widget _buildGridViewExample(BuildContext context) {
     return Container(
       height: 300,
       decoration: BoxDecoration(
@@ -206,8 +206,8 @@ class LayoutExamplePage extends StatelessWidget {
       ),
       child: GridView.builder(
         padding: const EdgeInsets.all(8),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: _getCrossAxisCount(context),
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
         ),
@@ -238,6 +238,10 @@ class LayoutExamplePage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  int _getCrossAxisCount(BuildContext context) {
+    return MediaQuery.of(context).size.width ~/ 150;
   }
 
   // ListView Example: 列表佈局
