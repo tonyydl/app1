@@ -11,6 +11,8 @@ jobs:
   validate_pr_title:
     name: Validate PR title
     runs-on: ubuntu-latest
+    # 只在 opened 或 edited 時檢查標題
+    if: github.event.action == 'opened' || github.event.action == 'edited'
     steps:
       - uses: amannn/action-semantic-pull-request@v5
         env:
@@ -19,6 +21,8 @@ jobs:
   flutter_test:
     name: Flutter Test
     runs-on: ubuntu-latest
+    # 只在 opened 或 synchronize (有新 commit) 時執行測試
+    if: github.event.action == 'opened' || github.event.action == 'synchronize'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
