@@ -64,6 +64,10 @@ class LayoutExamplePage extends StatelessWidget {
 
           _buildSectionTitle('ListView Example'),
           _buildListViewExample(),
+          const SizedBox(height: 24),
+
+          _buildSectionTitle('ListView separator Example'),
+          _buildListViewSeparatorExample(),
         ],
       ),
     );
@@ -254,6 +258,39 @@ class LayoutExamplePage extends StatelessWidget {
       ),
       child: ListView.builder(
         itemCount: listItems.length,
+        itemBuilder: (context, index) {
+          final item = listItems[index];
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundColor:
+                  Colors.primaries[index % Colors.primaries.length],
+              child: Text(item['name']![0]),
+            ),
+            title: Text(item['name']!),
+            subtitle: Text(item['email']!),
+            trailing: Chip(
+              label: Text(item['role']!, style: const TextStyle(fontSize: 11)),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+            ),
+            onTap: () {
+              // Handle tap
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildListViewSeparatorExample() {
+    return Container(
+      height: 250,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ListView.separated(
+        itemCount: listItems.length,
+        separatorBuilder: (context, index) => const Divider(height: 1),
         itemBuilder: (context, index) {
           final item = listItems[index];
           return ListTile(
