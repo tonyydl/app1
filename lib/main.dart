@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+import 'pages/counter_page.dart';
+import 'pages/text_style_page.dart';
+import 'pages/image_page.dart';
+import 'pages/button_page.dart';
+import 'pages/icon_page.dart';
+import 'pages/gesture_page.dart';
+import 'pages/container_page.dart';
+import 'pages/constrained_box_page.dart';
+import 'pages/flex_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,1235 +24,130 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter 元件練習'),
+      home: const HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+// 主頁：展示所有區塊的列表
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  static List<Map<String, dynamic>> get _sections => [
+    {
+      'title': '計數器範例',
+      'description': '基本的狀態管理和計數器功能',
+      'icon': Icons.add_circle,
+      'color': Colors.blue,
+      'page': () => const CounterExamplePage(),
+    },
+    {
+      'title': '文字樣式範例',
+      'description': '各種文字樣式和 Text 元件用法',
+      'icon': Icons.text_fields,
+      'color': Colors.green,
+      'page': () => const TextStyleExamplePage(),
+    },
+    {
+      'title': '圖片範例',
+      'description': '本地圖片和網路圖片的顯示',
+      'icon': Icons.image,
+      'color': Colors.orange,
+      'page': () => const ImageExamplePage(),
+    },
+    {
+      'title': '按鈕範例',
+      'description': '各種按鈕類型和交互方式',
+      'icon': Icons.smart_button,
+      'color': Colors.purple,
+      'page': () => const ButtonExamplePage(),
+    },
+    {
+      'title': '圖示範例',
+      'description': 'Flutter 內建圖示的使用',
+      'icon': Icons.star,
+      'color': Colors.amber,
+      'page': () => const IconExamplePage(),
+    },
+    {
+      'title': 'GestureDetector 手勢偵測',
+      'description': '單擊、雙擊、長按、滑動等手勢',
+      'icon': Icons.touch_app,
+      'color': Colors.red,
+      'page': () => const GestureExamplePage(),
+    },
+    {
+      'title': 'Container 差異驗證',
+      'description': 'Container 有無子元件的差異',
+      'icon': Icons.crop_square,
+      'color': Colors.teal,
+      'page': () => const ContainerExamplePage(),
+    },
+    {
+      'title': 'ConstrainedBox 約束盒子',
+      'description': '設定尺寸約束的盒子元件',
+      'icon': Icons.crop_din,
+      'color': Colors.indigo,
+      'page': () => const ConstrainedBoxExamplePage(),
+    },
+    {
+      'title': 'Expanded、Spacer、Flexible',
+      'description': '彈性元件和空間分配',
+      'icon': Icons.view_column,
+      'color': Colors.pink,
+      'page': () => const FlexExamplePage(),
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Flutter 元件練習'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
         centerTitle: true,
       ),
-      // 使用 SingleChildScrollView 讓內容可以滾動，適合不斷新增元件
-      body: SingleChildScrollView(
+      body: ListView.builder(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            // ===== 區塊 1：計數器 =====
-            _buildSectionTitle('計數器範例'),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const Text('你按了按鈕這麼多次：'),
-                    const SizedBox(height: 8),
-                    Text(
-                      '$_counter',
-                      style: Theme.of(context).textTheme.headlineLarge,
-                    ),
-                  ],
+        itemCount: _sections.length,
+        itemBuilder: (context, index) {
+          final section = _sections[index];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12.0),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: section['color'],
+                child: Icon(
+                  section['icon'],
+                  color: Colors.white,
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-
-            // ===== 區塊 2：文字樣式 =====
-            _buildSectionTitle('文字樣式範例'),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('普通文字'),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '粗體文字',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    Text.rich(
-                      TextSpan(
-                        text: 'This is ',
-                        children: const <TextSpan>[
-                          TextSpan(
-                            text: 'rich',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          TextSpan(text: ' text.'),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '彩色文字',
-                      style: TextStyle(color: Colors.blue, fontSize: 18),
-                    ),
-                  ],
+              title: Text(
+                section['title'],
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-
-            // ===== 區塊 3：圖片 =====
-            _buildSectionTitle('圖片範例'),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const Text('網路圖片：'),
-                    const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        'https://fastly.picsum.photos/id/18/200/300.jpg?hmac=ey-vd9wCRyYWPf6nwCk_ciMCPRLrWvI7O5Z1Hfg2Cf0',
-                        width: 200,
-                        height: 200,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text('本地圖片：'),
-                    const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        'assets/images/test1.jpg',
-                        width: 200,
-                        height: 200,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ],
+              subtitle: Text(
+                section['description'],
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 14,
                 ),
               ),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => section['page'](),
+                  ),
+                );
+              },
             ),
-            const SizedBox(height: 24),
-
-            // ===== 區塊 4：按鈕 =====
-            _buildSectionTitle('按鈕範例'),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        print('ElevatedButton 被按了');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: const Text('ElevatedButton'),
-                    ),
-                    const SizedBox(height: 8),
-                    TextButton(
-                      onPressed: () {
-                        print('TextButton 被按了');
-                      },
-                      style: TextButton.styleFrom(foregroundColor: Colors.red),
-                      child: const Text('TextButton'),
-                    ),
-                    const SizedBox(height: 8),
-                    OutlinedButton(
-                      onPressed: () {
-                        print('OutlinedButton 被按了');
-                      },
-                      child: const Text('OutlinedButton'),
-                    ),
-                    const SizedBox(height: 8),
-                    IconButton(
-                      onPressed: () {
-                        print('IconButton 被按了');
-                      },
-                      icon: const Icon(Icons.favorite),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // ===== 區塊 5：圖示 =====
-            _buildSectionTitle('圖示範例'),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Wrap(
-                  spacing: 16,
-                  runSpacing: 16,
-                  alignment: WrapAlignment.center,
-                  children: const [
-                    Icon(Icons.home, size: 40, color: Colors.blue),
-                    Icon(Icons.favorite, size: 40, color: Colors.red),
-                    Icon(Icons.star, size: 40, color: Colors.amber),
-                    Icon(Icons.settings, size: 40, color: Colors.grey),
-                    Icon(Icons.search, size: 40, color: Colors.green),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // ===== 區塊 6：GestureDetector 範例 =====
-            _buildSectionTitle('GestureDetector 手勢偵測範例'),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    // 單擊範例
-                    GestureDetector(
-                      onTap: () {
-                        print('單擊了！');
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('你單擊了藍色方塊')),
-                        );
-                      },
-                      child: Container(
-                        width: 150,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            '單擊我\n(onTap)',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // 長按範例
-                    GestureDetector(
-                      onLongPress: () {
-                        print('長按了！');
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('你長按了綠色方塊')),
-                        );
-                      },
-                      child: Container(
-                        width: 150,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            '長按我\n(onLongPress)',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // 雙擊範例
-                    GestureDetector(
-                      onDoubleTap: () {
-                        print('雙擊了！');
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('你雙擊了紅色方塊')),
-                        );
-                      },
-                      child: Container(
-                        width: 150,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            '雙擊我\n(onDoubleTap)',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // 滑動範例
-                    GestureDetector(
-                      onHorizontalDragEnd: (details) {
-                        if (details.primaryVelocity! > 0) {
-                          print('向右滑動');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('向右滑動 →')),
-                          );
-                        } else {
-                          print('向左滑動');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('向左滑動 ←')),
-                          );
-                        }
-                      },
-                      child: Container(
-                        width: 200,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.orange,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            '左右滑動我\n(onHorizontalDragEnd)',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // 多種手勢組合範例
-                    GestureDetector(
-                      onTap: () {
-                        print('單擊紫色方塊');
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('單擊！試試雙擊或長按')),
-                        );
-                      },
-                      onDoubleTap: () {
-                        print('雙擊紫色方塊');
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(const SnackBar(content: Text('雙擊！')));
-                      },
-                      onLongPress: () {
-                        print('長按紫色方塊');
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(const SnackBar(content: Text('長按！')));
-                      },
-                      onHorizontalDragEnd: (details) {
-                        if (details.primaryVelocity! > 0) {
-                          print('向右滑動');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('向右滑動 →')),
-                          );
-                        } else {
-                          print('向左滑動');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('向左滑動 ←')),
-                          );
-                        }
-                      },
-                      child: Container(
-                        width: 200,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.purple,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            '多種手勢\n(單擊/雙擊/長按/滑動)',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // ===== 區塊 7：Container 差異驗證 =====
-            _buildSectionTitle('Container 無子/有子 Widget 差異'),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '📌 重點：Container 的行為會根據有無子 Widget 而不同',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Divider(),
-                    const SizedBox(height: 16),
-
-                    // 1. 無子 Widget 的 Container
-                    const Text(
-                      '1️⃣ 無子 Widget 的 Container',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const Text('→ 會盡可能擴展至最大可用空間'),
-                    const SizedBox(height: 8),
-                    Container(
-                      height: 100,
-                      color: Colors.blue.withValues(alpha: 0.3),
-                      // 注意：沒有 child
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ 這個藍色 Container 沒有子元件，所以寬度會填滿整個可用空間',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 2. 有子 Widget 的 Container
-                    const Text(
-                      '2️⃣ 有子 Widget 的 Container',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const Text('→ 會收縮以適應子 Widget 的大小'),
-                    const SizedBox(height: 8),
-                    Container(
-                      color: Colors.green.withValues(alpha: 0.3),
-                      padding: const EdgeInsets.all(16),
-                      child: const Text('我是子 Widget'),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ 這個綠色 Container 有子元件，所以只會包裹子元件的大小',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 3. 並排對比
-                    const Text(
-                      '3️⃣ 並排對比（Row 內的行為）',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        // 無子 Widget - 需要指定寬度，否則會報錯
-                        Container(
-                          width: 100,
-                          height: 80,
-                          color: Colors.red.withValues(alpha: 0.3),
-                        ),
-                        const SizedBox(width: 8),
-                        // 有子 Widget - 自動調整大小
-                        Container(
-                          height: 80,
-                          color: Colors.orange.withValues(alpha: 0.3),
-                          padding: const EdgeInsets.all(16),
-                          child: const Center(child: Text('有子元件')),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ 左邊（紅色）：無子元件，必須指定 width\n'
-                      '↑ 右邊（橘色）：有子元件，自動調整寬度',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 4. 設定固定尺寸的對比
-                    const Text(
-                      '4️⃣ 設定固定尺寸後的行為',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          children: [
-                            Container(
-                              width: 120,
-                              height: 80,
-                              color: Colors.purple.withValues(alpha: 0.3),
-                              // 無子元件
-                            ),
-                            const SizedBox(height: 4),
-                            const Text(
-                              '無子\n固定尺寸',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 12),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              width: 120,
-                              height: 80,
-                              color: Colors.teal.withValues(alpha: 0.3),
-                              child: const Center(child: Text('內容')),
-                            ),
-                            const SizedBox(height: 4),
-                            const Text(
-                              '有子\n固定尺寸',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ 當設定固定 width/height 時，有無子元件的差異就不明顯了',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 總結
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.amber.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.amber),
-                      ),
-                      child: const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '📝 總結',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 8),
-                          Text('• 無子 Widget：Container 會盡量擴展'),
-                          Text('• 有子 Widget：Container 會收縮以適應子元件'),
-                          Text('• 在 Row/Column 中無子 Widget 需指定尺寸'),
-                          Text('• 設定固定尺寸後，兩者行為相同'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // ===== 區塊 8：ConstrainedBox 範例 =====
-            _buildSectionTitle('ConstrainedBox 約束盒子範例'),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '📌 ConstrainedBox：設定尺寸約束的盒子',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const Text(
-                      '可以限制子元件的最小/最大尺寸',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    const SizedBox(height: 16),
-                    const Divider(),
-                    const SizedBox(height: 16),
-
-                    // 1. 設定最小尺寸
-                    const Text(
-                      '1️⃣ 設定最小尺寸 (minWidth, minHeight)',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        minWidth: 200,
-                        minHeight: 100,
-                      ),
-                      child: Container(
-                        color: Colors.blue.withValues(alpha: 0.3),
-                        child: const Center(child: Text('短文字')),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ 即使內容很少，也會保持最小 200x100 的尺寸',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 2. 設定最大尺寸
-                    const Text(
-                      '2️⃣ 設定最大尺寸 (maxWidth, maxHeight)',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: 180,
-                        maxHeight: 80,
-                      ),
-                      child: Container(
-                        color: Colors.green.withValues(alpha: 0.3),
-                        padding: const EdgeInsets.all(8),
-                        child: const Text(
-                          '這是一段很長的文字內容，會因為最大尺寸限制而自動換行或被裁切',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ 不會超過最大尺寸 180x80，文字會自動換行',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 3. 同時設定最小和最大
-                    const Text(
-                      '3️⃣ 同時設定最小和最大尺寸',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        // 內容少的情況
-                        Expanded(
-                          child: Column(
-                            children: [
-                              ConstrainedBox(
-                                constraints: const BoxConstraints(
-                                  minWidth: 100,
-                                  maxWidth: 150,
-                                  minHeight: 60,
-                                  maxHeight: 100,
-                                ),
-                                child: Container(
-                                  color: Colors.orange.withValues(alpha: 0.3),
-                                  child: const Center(child: Text('少')),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              const Text(
-                                '內容少\n(取最小值)',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        // 內容多的情況
-                        Expanded(
-                          child: Column(
-                            children: [
-                              ConstrainedBox(
-                                constraints: const BoxConstraints(
-                                  minWidth: 100,
-                                  maxWidth: 150,
-                                  minHeight: 60,
-                                  maxHeight: 100,
-                                ),
-                                child: Container(
-                                  color: Colors.purple.withValues(alpha: 0.3),
-                                  padding: const EdgeInsets.all(8),
-                                  child: const Text(
-                                    '很多內容的文字會在範圍內適應',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              const Text(
-                                '內容多\n(在範圍內)',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 4. 固定寬度，彈性高度
-                    const Text(
-                      '4️⃣ 固定寬度，彈性高度',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        minWidth: 250,
-                        maxWidth: 250,
-                        minHeight: 0,
-                        maxHeight: double.infinity,
-                      ),
-                      child: Container(
-                        color: Colors.teal.withValues(alpha: 0.3),
-                        padding: const EdgeInsets.all(12),
-                        child: const Text(
-                          '固定寬度 250，但高度會根據內容自動調整。'
-                          '這種設定很適合用在需要固定寬度但內容長度不確定的情況。',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ 寬度固定 250，高度根據內容自適應',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 5. 實用場景：按鈕最小寬度
-                    const Text(
-                      '5️⃣ 實用場景：確保按鈕最小寬度',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(minWidth: 120),
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            child: const Text('確定'),
-                          ),
-                        ),
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(minWidth: 120),
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey,
-                            ),
-                            child: const Text('取消'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ 兩個按鈕都設定最小寬度 120，確保視覺一致性',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 總結
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.blue),
-                      ),
-                      child: const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '📝 總結',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 8),
-                          Text('• minWidth/minHeight：設定最小尺寸'),
-                          Text('• maxWidth/maxHeight：設定最大尺寸'),
-                          Text('• 可同時設定範圍，內容會在範圍內自適應'),
-                          Text('• 適合響應式設計和確保 UI 一致性'),
-                          Text('• double.infinity 表示無限大'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // ===== 區塊 9：Expanded、Spacer、Flexible 彈性元件範例 =====
-            _buildSectionTitle('Expanded、Spacer、Flexible 彈性元件範例'),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '📌 彈性元件：在 Row/Column 中動態分配空間',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const Text(
-                      'Expanded：填滿剩餘空間｜Spacer：空白間距｜Flexible：彈性調整',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    const SizedBox(height: 16),
-                    const Divider(),
-                    const SizedBox(height: 16),
-
-                    // 1. Expanded 基本用法
-                    const Text(
-                      '1️⃣ Expanded - 填滿剩餘空間',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      height: 60,
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 80,
-                            color: Colors.red.withValues(alpha: 0.3),
-                            child: const Center(child: Text('固定')),
-                          ),
-                          Expanded(
-                            child: Container(
-                              color: Colors.blue.withValues(alpha: 0.3),
-                              child: const Center(child: Text('Expanded 填滿剩餘')),
-                            ),
-                          ),
-                          Container(
-                            width: 80,
-                            color: Colors.red.withValues(alpha: 0.3),
-                            child: const Center(child: Text('固定')),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ 中間的藍色區域會自動填滿剩餘空間',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 2. Expanded 比例分配
-                    const Text(
-                      '2️⃣ Expanded 比例分配 (flex 屬性)',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      height: 60,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              color: Colors.red.withValues(alpha: 0.3),
-                              child: const Center(child: Text('flex: 1')),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              color: Colors.green.withValues(alpha: 0.3),
-                              child: const Center(child: Text('flex: 2')),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              color: Colors.blue.withValues(alpha: 0.3),
-                              child: const Center(child: Text('flex: 1')),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ 比例 1:2:1，綠色區域佔兩倍空間',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 3. Spacer 空白間距
-                    const Text(
-                      '3️⃣ Spacer - 空白間距元件',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 80,
-                            color: Colors.orange.withValues(alpha: 0.3),
-                            child: const Center(child: Text('左側')),
-                          ),
-                          const Spacer(),
-                          Container(
-                            width: 80,
-                            color: Colors.purple.withValues(alpha: 0.3),
-                            child: const Center(child: Text('右側')),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ Spacer 把兩個元件推到兩端',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 4. 多個 Spacer 的比例
-                    const Text(
-                      '4️⃣ 多個 Spacer 的比例分配',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 60,
-                            color: Colors.red.withValues(alpha: 0.3),
-                            child: const Center(child: Text('A')),
-                          ),
-                          const Spacer(flex: 1),
-                          Container(
-                            width: 60,
-                            color: Colors.green.withValues(alpha: 0.3),
-                            child: const Center(child: Text('B')),
-                          ),
-                          const Spacer(flex: 2),
-                          Container(
-                            width: 60,
-                            color: Colors.blue.withValues(alpha: 0.3),
-                            child: const Center(child: Text('C')),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ A-B 間距 : B-C 間距 = 1:2',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 5. Flexible 彈性調整
-                    const Text(
-                      '5️⃣ Flexible - 彈性調整大小',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const Text(
-                      'Flexible vs Expanded：關鍵在於多個彈性元件競爭空間時的行為',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // 最能展示 Flexible 特性的範例
-                    const Text('MainAxisSize.min 展示 Flexible 的真正特性：'),
-                    const SizedBox(height: 4),
-                    Center(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min, // 關鍵設定
-                          children: [
-                            Flexible(
-                              child: Container(
-                                color: Colors.green.withValues(alpha: 0.3),
-                                padding: const EdgeInsets.all(8),
-                                child: const Text('Flexible 緊縮'),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              color: Colors.red.withValues(alpha: 0.3),
-                              padding: const EdgeInsets.all(8),
-                              child: const Text('固定'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ 關鍵差異：Flexible 讓 Row 緊縮，Expanded 會撐開整個 Row',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 6. Flexible fit 屬性
-                    const Text(
-                      '6️⃣ Flexible fit 屬性差異',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      height: 100,
-                      child: Column(
-                        children: [
-                          // FlexFit.loose (預設)
-                          Expanded(
-                            child: Row(
-                              children: [
-                                const Text('FlexFit.loose: '),
-                                Flexible(
-                                  fit: FlexFit.loose,
-                                  child: Container(
-                                    color: Colors.orange.withValues(alpha: 0.3),
-                                    child: const Center(child: Text('短')),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          // FlexFit.tight
-                          Expanded(
-                            child: Row(
-                              children: [
-                                const Text('FlexFit.tight: '),
-                                Flexible(
-                                  fit: FlexFit.tight,
-                                  child: Container(
-                                    color: Colors.teal.withValues(alpha: 0.3),
-                                    child: const Center(child: Text('短')),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ loose: 按內容大小｜tight: 填滿可用空間 (等同 Expanded)',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 7. 實用場景：響應式按鈕列
-                    const Text(
-                      '7️⃣ 實用場景：響應式按鈕列',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                            ),
-                            child: const Text('取消'),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          flex: 2,
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              foregroundColor: Colors.white,
-                            ),
-                            child: const Text('確認提交'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 8. Column 中的應用
-                    const Text(
-                      '8️⃣ Column 中的垂直空間分配',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      height: 120,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 30,
-                            color: Colors.red.withValues(alpha: 0.3),
-                            child: const Center(child: Text('頂部固定')),
-                          ),
-                          const Spacer(),
-                          Container(
-                            height: 20,
-                            color: Colors.green.withValues(alpha: 0.3),
-                            child: const Center(child: Text('中間')),
-                          ),
-                          const Spacer(),
-                          Container(
-                            height: 30,
-                            color: Colors.blue.withValues(alpha: 0.3),
-                            child: const Center(child: Text('底部固定')),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '↑ Spacer 在 Column 中創造垂直間距',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 總結
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.purple.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.purple),
-                      ),
-                      child: const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '📝 總結',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 8),
-                          Text('• Expanded：強制填滿剩餘空間，可設定 flex 比例'),
-                          Text('• Spacer：專門創造空白間距，實際上是簡化版的 Expanded'),
-                          Text('• Flexible：彈性調整，不強制填滿空間'),
-                          Text('• FlexFit.loose：按內容大小 (預設)'),
-                          Text('• FlexFit.tight：填滿空間 (等同 Expanded)'),
-                          Text('• 只能在 Row/Column/Flex 中使用'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // ===== 在這裡新增更多區塊 =====
-            const SizedBox(height: 50), // 底部留白
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: '增加計數',
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  // 區塊標題的共用方法
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Colors.deepPurple,
-        ),
+          );
+        },
       ),
     );
   }
