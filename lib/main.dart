@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    const Text('你按惹按鈕這麼多次：'),
+                    const Text('你按了按鈕這麼多次：'),
                     const SizedBox(height: 8),
                     Text(
                       '$_counter',
