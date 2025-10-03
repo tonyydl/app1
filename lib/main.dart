@@ -8,6 +8,7 @@ import 'pages/gesture_page.dart';
 import 'pages/container_page.dart';
 import 'pages/constrained_box_page.dart';
 import 'pages/flex_page.dart';
+import 'pages/layout_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -97,6 +98,13 @@ class HomePage extends StatelessWidget {
       'color': Colors.pink,
       'page': () => const FlexExamplePage(),
     },
+    {
+      'title': 'Layout 範例',
+      'description': '更多布局範例待新增...',
+      'icon': Icons.more_horiz,
+      'color': Colors.grey,
+      'page': () => const LayoutExamplePage(),
+    },
   ];
 
   @override
@@ -117,10 +125,7 @@ class HomePage extends StatelessWidget {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: section['color'],
-                child: Icon(
-                  section['icon'],
-                  color: Colors.white,
-                ),
+                child: Icon(section['icon'], color: Colors.white),
               ),
               title: Text(
                 section['title'],
@@ -131,18 +136,13 @@ class HomePage extends StatelessWidget {
               ),
               subtitle: Text(
                 section['description'],
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
-                ),
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
               ),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => section['page'](),
-                  ),
+                  MaterialPageRoute(builder: (context) => section['page']()),
                 );
               },
             ),
