@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter 學習專案',
+      title: 'Flutter 學習專案 test1',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -117,10 +117,7 @@ class HomePage extends StatelessWidget {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: section['color'],
-                child: Icon(
-                  section['icon'],
-                  color: Colors.white,
-                ),
+                child: Icon(section['icon'], color: Colors.white),
               ),
               title: Text(
                 section['title'],
@@ -131,18 +128,13 @@ class HomePage extends StatelessWidget {
               ),
               subtitle: Text(
                 section['description'],
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
-                ),
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
               ),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => section['page'](),
-                  ),
+                  MaterialPageRoute(builder: (context) => section['page']()),
                 );
               },
             ),
