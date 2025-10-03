@@ -39,10 +39,10 @@ class LayoutExamplePage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: ListView(
-        padding: const EdgeInsets.only(
+        padding: const EdgeInsetsDirectional.only(
+          start: 32,
+          end: 32,
           top: 16,
-          left: 32,
-          right: 32,
           bottom: 32,
         ),
         children: [
